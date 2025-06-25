@@ -33,6 +33,7 @@ def update_product(db: Session, product_id: int, product: schemas.ProductCreate,
     if db_product:
         db_product.name = product.name
         db_product.description = product.description
+        db_product.image_url = product.image_url
         db.commit()
         db.refresh(db_product)
     return db_product

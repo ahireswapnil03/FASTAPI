@@ -19,12 +19,14 @@ class Token(BaseModel):
 class ProductCreate(BaseModel):
     name: str
     description: Optional[str] = None
+    image_url: Optional[str] = None
 
 class ProductOut(BaseModel):
     id: int
     name: str
     description: Optional[str] = None
     user_id: int
+    image_url: Optional[str] = None
 
     class Config:
         orm_mode = True

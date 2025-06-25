@@ -13,6 +13,7 @@ class Product(Base):
     name = Column(String(100), index=True)
     description = Column(String(255), nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    image_url = Column(String(255), nullable=True)
 
 
 
