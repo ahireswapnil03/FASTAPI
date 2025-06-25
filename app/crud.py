@@ -27,3 +27,19 @@ def create_product(db: Session, product: schemas.ProductCreate, user_id: int):
     db.commit()
     db.refresh(db_product)
     return db_product
+
+def update_product(db: Session, product_id: int, product: schemas.ProductCreate, user_id: int):
+    db_product = db.query(models.Product).filter(models.Product.id == product_id, models.Product.user_id == user_id).first()
+    if db_product:
+        db_product.name = product.name
+        db_product.description = product.description
+        db.commit()
+        db.refresh(db_product)
+    return db_product
+
+def delete_product(db: Session, product_id: int, user_id: int):
+    db_product = db.query(models.Product).filter(models.Product.id == product_id, models.Product.user_id == user_id).first()
+    if db_product:
+        db.delete(db_product)
+        db.commit()
+    return db_product

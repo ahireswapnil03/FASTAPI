@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Path
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from . import models, schemas, crud, database, auth
@@ -6,7 +6,7 @@ from .database import engine
 from .deps import get_db
 from .deps import get_current_user
 from .schemas import ProductCreate, ProductOut
-from .crud import create_product
+from .crud import create_product, update_product, delete_product
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -34,9 +34,23 @@ def read_users_me(current_user: schemas.UserOut = Depends(get_current_user)):
     return current_user
 
 @app.post("/products/", response_model=ProductOut)
-def create_new_product(product: ProductCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def create_new_product(product: ProductCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     return create_product(db, product, user_id=current_user.id)
 
 @app.get("/products/", response_model=list[ProductOut])
-def list_my_products(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def list_my_products(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     return db.query(models.Product).filter(models.Product.user_id == current_user.id).all()
+
+@app.put("/products/{product_id}", response_model=ProductOut)
+def update_my_product(product: ProductCreate, product_id: int = Path(...), db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    updated = update_product(db, product_id, product, user_id=current_user.id)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Product not found or not owned by user")
+    return updated
+
+@app.delete("/products/{product_id}", response_model=ProductOut)
+def delete_my_product(product_id: int = Path(...), db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    deleted = delete_product(db, product_id, user_id=current_user.id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Product not found or not owned by user")
+    return deleted
