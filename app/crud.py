@@ -43,3 +43,11 @@ def delete_product(db: Session, product_id: int, user_id: int):
         db.delete(db_product)
         db.commit()
     return db_product
+
+def create_products_bulk(db: Session, products: list[schemas.ProductCreate], user_id: int):
+    db_products = [models.Product(name=prod.name, description=prod.description, user_id=user_id) for prod in products]
+    db.add_all(db_products)
+    db.commit()
+    for prod in db_products:
+        db.refresh(prod)
+    return db_products

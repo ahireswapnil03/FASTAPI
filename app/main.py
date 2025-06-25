@@ -5,8 +5,8 @@ from . import models, schemas, crud, database, auth
 from .database import engine
 from .deps import get_db
 from .deps import get_current_user
-from .schemas import ProductCreate, ProductOut
-from .crud import create_product, update_product, delete_product
+from .schemas import ProductCreate, ProductOut, ProductBulkCreate
+from .crud import create_product, update_product, delete_product, create_products_bulk
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -54,3 +54,7 @@ def delete_my_product(product_id: int = Path(...), db: Session = Depends(get_db)
     if not deleted:
         raise HTTPException(status_code=404, detail="Product not found or not owned by user")
     return deleted
+
+@app.post("/products/bulk", response_model=list[ProductOut])
+def create_products_in_bulk(bulk: ProductBulkCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    return create_products_bulk(db, bulk.products, user_id=current_user.id)
