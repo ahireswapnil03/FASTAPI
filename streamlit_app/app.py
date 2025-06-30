@@ -54,14 +54,14 @@ def product_crud():
             with st.expander(prod['name']):
                 st.write(f"Description: {prod['description']}")
                 st.write(f"Image URL: {prod.get('image_url', '')}")
-                if st.button(f"Delete {prod['id']}", key=f"del_{prod['id']}"):
+                if st.button("Delete", key=f"del_{prod['id']}"):
                     del_resp = requests.delete(f"{API_URL}/products/{prod['id']}", headers=headers)
                     if del_resp.status_code == 200:
                         st.success("Deleted!")
                         st.rerun()
                     else:
                         st.error("Delete failed.")
-                if st.button(f"Edit {prod['id']}", key=f"edit_{prod['id']}"):
+                if st.button("Edit", key=f"edit_{prod['id']}"):
                     st.session_state['edit_id'] = prod['id']
                     st.session_state['edit_name'] = prod['name']
                     st.session_state['edit_desc'] = prod['description']
