@@ -60,7 +60,10 @@ def product_crud():
         for prod in products:
             with st.expander(prod['name']):
                 st.write(f"Description: {prod['description']}")
-                st.write(f"Image URL: {prod.get('image_url', '')}")
+                if prod.get('image_url'):
+                    st.image(prod['image_url'], caption=prod['name'], use_container_width=True, width=350)
+                else:
+                    st.write(f"Image URL: {prod.get('image_url', 'None')}")
                 if st.button("Delete", key=f"del_{prod['id']}"):
                     del_resp = requests.delete(f"{API_URL}/products/{prod['id']}", headers=headers)
                     if del_resp.status_code == 200:
