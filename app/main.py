@@ -7,6 +7,7 @@ from .deps import get_db
 from .deps import get_current_user
 from .schemas import ProductCreate, ProductOut, ProductBulkCreate
 from .crud import create_product, update_product, delete_product, create_products_bulk
+from sqlalchemy import or_
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -58,3 +59,13 @@ def delete_my_product(product_id: int = Path(...), db: Session = Depends(get_db)
 @app.post("/products/bulk", response_model=list[ProductOut])
 def create_products_in_bulk(bulk: ProductBulkCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     return create_products_bulk(db, bulk.products, user_id=current_user.id)
+
+@app.get("/products/search", response_model=list[ProductOut])
+def search_products(query: str, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    return db.query(models.Product).filter(
+        models.Product.user_id == current_user.id,
+        or_(
+            models.Product.name.ilike(f"%{query}%"),
+            models.Product.description.ilike(f"%{query}%")
+        )
+    ).all()
