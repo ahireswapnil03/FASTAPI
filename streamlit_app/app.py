@@ -22,6 +22,7 @@ def login():
             st.session_state['token'] = token
             st.session_state['username'] = username
             st.success("Logged in!")
+            st.session_state['menu'] = "Products"
             st.rerun()
         else:
             st.error("Login failed. Check your credentials.")
@@ -104,7 +105,10 @@ def product_crud():
 
 # --- Main App Logic ---
 menu = ["Login", "Register", "Products"]
-choice = st.sidebar.selectbox("Menu", menu)
+if 'menu' not in st.session_state:
+    st.session_state['menu'] = menu[0]
+choice = st.sidebar.selectbox("Menu", menu, index=menu.index(st.session_state['menu']))
+st.session_state['menu'] = choice
 
 if choice == "Login":
     login()
