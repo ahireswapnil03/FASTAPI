@@ -298,4 +298,10 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## Support
 
-For questions or issues, please open an issue on the GitHub repository. 
+For questions or issues, please open an issue on the GitHub repository.
+
+## Demo Video
+
+Check out the demo of this FastAPI and Streamlit app on Loom:
+
+[Watch the video here](https://www.loom.com/share/e2f9c2dd7ecb415792244098c5525388?sid=2f553889-6212-438e-8a42-1b8acb3a995c) 
