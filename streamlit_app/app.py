@@ -45,9 +45,16 @@ def product_crud():
     token = st.session_state['token']
     headers = {"Authorization": f"Bearer {token}"}
 
+    # --- Search Bar ---
+    st.header("Search Products")
+    search_query = st.text_input("Search by name or description")
+    if search_query:
+        resp = requests.get(f"{API_URL}/products/search", params={"query": search_query}, headers=headers)
+    else:
+        resp = requests.get(f"{API_URL}/products/", headers=headers)
+
     # List products
     st.header("Your Products")
-    resp = requests.get(f"{API_URL}/products/", headers=headers)
     if resp.status_code == 200:
         products = resp.json()
         for prod in products:
